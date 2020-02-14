@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,9 +26,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private SpringSocialConfigurer springSocialConfigurer;
+
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.apply(springSocialConfigurer).and()
+                .authorizeRequests()
                 .antMatchers("/captcha").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -56,4 +63,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/**/vendors/**","/**/fonts/**","/**/img/**","/**/js/**","/**/css/**");
     }
+
 }
